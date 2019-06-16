@@ -4,13 +4,17 @@ import java.awt.image.*;
 
 import javax.swing.*;
 
+import java.util.*;
+
 public class Game extends Canvas implements Runnable
 {
    public static final int WIDTH = 640;
    public static final int HEIGHT = 480;
    private static final int FPS = 75;
    private final String title = "Brick Breaker";
-
+   private final Random rand = new Random();
+   
+   protected Ball ball;
    protected Player player;
    protected BufferedImage image;
    protected BufferStrategy bufferStrategy;
@@ -18,11 +22,17 @@ public class Game extends Canvas implements Runnable
    protected JFrame frame;
    protected volatile boolean running, gameOver, isPaused;
 
+   protected int numOfBlocks;
+   protected int score;
+
    public Game()
    {
       running = false;
       gameOver = false;
       isPaused = false;
+     
+      score = 0;
+      numOfBlocks = 0;
 
       setPreferredSize(new Dimension(WIDTH, HEIGHT));
       setMaximumSize(new Dimension(WIDTH, HEIGHT));
@@ -105,6 +115,7 @@ public class Game extends Canvas implements Runnable
       
       requestFocus(); 
       
+      ball = new Ball(rand.nextInt(getWidth() - 50) + 30, getHeight()/3);
       player = new Player(getWidth() / 2, getHeight() - 40);
       addKeyListener(new KeyInput(this));
    }
@@ -137,7 +148,7 @@ public class Game extends Canvas implements Runnable
          render();
          initialTime = currentTime;
 
-         if (timer == 1000000000)
+         if (timer >= 1000000000)
          {
             System.out.println("Ticks/FPS: " + ticks);
             ticks = 0;
@@ -151,6 +162,7 @@ public class Game extends Canvas implements Runnable
    public void update()
    {
       player.update();
+      ball.update();
    }
 
    public void render()
@@ -169,6 +181,7 @@ public class Game extends Canvas implements Runnable
       g.fillRect(0, 0, WIDTH, HEIGHT);
 
       player.draw(g);
+      ball.draw(g);
 
       bufferStrategy.show();
       g.dispose();

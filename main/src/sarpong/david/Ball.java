@@ -13,7 +13,7 @@ public class Ball implements Entity
       
       this.color = Color.YELLOW;
 
-      this.diameter = 20;
+      this.diameter = 10;
       this.velX = 2;
    }
 

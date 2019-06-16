@@ -25,11 +25,11 @@ public class Player implements Entity
       }
       else if (x >= Game.WIDTH - width)
       {
-         x = Game.WIDTH - width;
+         x = Game.WIDTH - width - 1;
       }
       else if (x <= 0)
       {
-         x = 0;
+         x = 1;
       }
    }
 
