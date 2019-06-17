@@ -1,4 +1,6 @@
-import java.awt.Graphics;
+package sarpong.david;
+
+import java.awt.*;
 
 public interface Entity
 {
@@ -10,4 +12,6 @@ public interface Entity
    
    public double getX();
    public double getY();
+
+   public Rectangle getBounds();
 }

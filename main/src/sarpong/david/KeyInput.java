@@ -1,3 +1,5 @@
+package sarpong.david;
+
 import java.awt.event.*;
 
 public class KeyInput extends KeyAdapter

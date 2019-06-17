@@ -1,3 +1,5 @@
+package sarpong.david;
+
 import java.awt.*;
 
 public class Player implements Entity
@@ -10,7 +12,7 @@ public class Player implements Entity
       this.x = x;
       this.y = y;
 
-      this.width = 90;
+      this.width = 110;
       this.height = 6;
       this.velX = 0.0;
    }
@@ -67,5 +69,11 @@ public class Player implements Entity
    public double getY()
    {
       return y;
+   }
+
+   @Override
+   public Rectangle getBounds()
+   {
+      return new Rectangle((int) x, (int) y, width, height);
    }
 }

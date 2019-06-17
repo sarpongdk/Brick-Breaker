@@ -1,3 +1,5 @@
+package sarpong.david;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -8,12 +10,18 @@ import java.util.*;
 
 public class Game extends Canvas implements Runnable
 {
-   public static final int WIDTH = 640;
-   public static final int HEIGHT = 480;
+   public static final Color BG_COLOR = Color.BLACK;
+   public static final Color FG_COLOR = Color.WHITE;
+   public static final int WIDTH = 720;
+   public static final int HEIGHT = (3 * WIDTH)/4;
    private static final int FPS = 75;
    private final String title = "Brick Breaker";
    private final Random rand = new Random();
    
+   protected int currentFPS;
+   private Graphics g;
+   protected BlockController blockController;
+   protected Menu menu;
    protected Ball ball;
    protected Player player;
    protected BufferedImage image;
@@ -31,6 +39,7 @@ public class Game extends Canvas implements Runnable
       gameOver = false;
       isPaused = false;
      
+      currentFPS = 0;
       score = 0;
       numOfBlocks = 0;
 
@@ -114,8 +123,11 @@ public class Game extends Canvas implements Runnable
       image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);   
       
       requestFocus(); 
-      
-      ball = new Ball(rand.nextInt(getWidth() - 50) + 30, getHeight()/3);
+    
+      numOfBlocks = 21;
+      menu = new Menu();
+      ball = new Ball(rand.nextInt(getWidth() - 50) + 30, getHeight()/2, this);
+      blockController = new BlockController(11, 4, this);
       player = new Player(getWidth() / 2, getHeight() - 40);
       addKeyListener(new KeyInput(this));
    }
@@ -133,6 +145,11 @@ public class Game extends Canvas implements Runnable
 
       while (running)
       {
+         while (isPaused)
+         {
+         
+         }
+
          long currentTime = System.nanoTime();
          long elapsedTime = currentTime - initialTime;
          delta += elapsedTime/timePerFrame;
@@ -150,9 +167,14 @@ public class Game extends Canvas implements Runnable
 
          if (timer >= 1000000000)
          {
-            System.out.println("Ticks/FPS: " + ticks);
+            currentFPS = ticks;
             ticks = 0;
             timer = 0;
+         }
+
+         if (numOfBlocks == 0)
+         {
+            running = false;
          }
       }
 
@@ -163,6 +185,10 @@ public class Game extends Canvas implements Runnable
    {
       player.update();
       ball.update();
+      blockController.update();
+
+      numOfBlocks = blockController.getNumberOfBlocks();
+      score = blockController.getScore();
    }
 
    public void render()
@@ -174,17 +200,51 @@ public class Game extends Canvas implements Runnable
          return;
       }
 
-      Graphics g = bufferStrategy.getDrawGraphics();
+      g = bufferStrategy.getDrawGraphics();
 
       g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
-      g.setColor(Color.BLACK);
+      g.setColor(BG_COLOR);
       g.fillRect(0, 0, WIDTH, HEIGHT);
-
-      player.draw(g);
-      ball.draw(g);
+     
+      if (isPaused)
+      {
+         menu.draw(g);
+      }
+      else
+      {
+         player.draw(g);
+         ball.draw(g);
+         blockController.draw(g);
+      }
 
       bufferStrategy.show();
       g.dispose();
+   }
+
+   public Player getPlayer()
+   {
+      return player;
+   }
+   
+   public Ball getBall()
+   {
+      return ball;
+   }
+
+   public BlockController getBlockController()
+   {
+      return blockController;
+   }
+
+   public void decreaseBlocksNumber()
+   {
+      numOfBlocks--;
+
+   }
+
+   public Graphics getGraphics()
+   {
+      return g;
    }
 
    public static void main(String[] args)
